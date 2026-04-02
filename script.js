@@ -66,7 +66,7 @@ const TEMPLATE = {
   colors: ["#6A6CE0", "#F2F06A", "#6AF26A", "#F26A6A"],
 
   venn2: ({ A, B, AB, names, pct }) => `
-  <svg viewBox="0 0 600 400" width="100%">
+  <svg viewBox="0 0 600 400" width="500">
     <circle cx="220" cy="200" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
     <circle cx="380" cy="200" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
 
@@ -177,8 +177,8 @@ function showGenes(key) {
     onlyC: "List C only"
   };
 
-  document.getElementById("resultTitle").innerText =
-    titleMap[key] || key;
+  document.getElementById("resultSelected").innerText =
+    "Selected: " + (titleMap[key] || key);
 
   document.getElementById("resultMeta").innerText =
     `${genes.length} genes`;
