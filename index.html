@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Venn Diagram Tool</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Venn Diagram Tool</h1>
+
+      <div class="input-grid">
+        <div class="card">
+          <input class="title" placeholder="List A name" value="List A" />
+          <textarea placeholder="Gene1&#10;Gene2&#10;Gene3"></textarea>
+        </div>
+
+        <div class="card">
+          <input class="title" placeholder="List B name" value="List B" />
+          <textarea></textarea>
+        </div>
+
+        <div class="card">
+          <input class="title" placeholder="List C name" value="List C" />
+          <textarea></textarea>
+        </div>
+      </div>
+
+      <button id="runBtn">Generate</button>
+
+      <div class="controls">
+
+        <label>Font:</label>
+        <select id="fontSelect">
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Calibri, sans-serif">Calibri</option>
+        </select>
+
+        <label>Size:</label>
+        <input type="range" id="fontSize" min="12" max="28" value="18">
+
+        <label>
+            <input type="checkbox" id="togglePct" checked>
+            Show %
+        </label>
+
+        </div>
+
+      <div id="venn"></div>
+
+    <div id="resultBox" class="result-box">
+
+    <div class="result-header">
+        <div id="resultTitle" class="result-title">
+        Click a region to view genes
+        </div>
+
+        <button id="copyBtn">Copy</button>
+    </div>
+
+    <div id="resultMeta" class="result-meta"></div>
+
+    <div id="resultGenes" class="result-genes"></div>
+
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
