@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Venn Diagram Tool</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body>
@@ -57,7 +58,22 @@
     <div class="main-layout">
 
       <!-- Venn Diagram -->
-      <div id="venn"></div>
+      <div class="venn-wrapper position-relative">
+
+        <div id="venn"></div>
+
+        <!-- Download button -->
+        <button 
+          id="downloadBtn"
+          class="btn btn-dark btn-sm position-absolute top-0 end-0 m-2 shadow-sm"
+          data-bs-toggle="tooltip"
+          data-bs-placement="left"
+          title="Download PNG"
+        >
+          <i class="bi bi-download"></i>
+        </button>
+
+      </div>
 
       <!-- Result Panel -->
       <div id="resultBox" class="result-box">

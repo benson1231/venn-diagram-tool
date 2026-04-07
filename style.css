@@ -110,6 +110,44 @@ button {
   align-items: center;
 }
 
+/* ===== Venn wrapper（讓 icon 可以定位） ===== */
+.venn-wrapper {
+  position: relative;
+}
+
+#downloadBtn {
+  position: absolute;
+  top: -12px;
+  right: 12px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.7); /* 跟你整體主題一致 */
+  color: #e2e8f0;
+
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+/* hover（重點：微亮，不要太誇張） */
+#downloadBtn:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* 點擊感 */
+#downloadBtn:active {
+  transform: scale(0.95);
+}
+
 
 /* ===== SVG文字置中 =====
    - 圓內數字 / label 對齊

@@ -58,12 +58,13 @@ function diff(a, b) {
 /* 畫 label（集合名稱） */
 function label(x, y, text) {
   return `<text x="${x}" y="${y}" 
+    text-anchor="middle"
+    dominant-baseline="middle"
     font-size="${STYLE.fontSize + 2}" 
     font-family="${STYLE.fontFamily}">
     ${text}
   </text>`;
 }
-
 
 /* 畫數值（可點擊區域）
    - 顯示 count
@@ -110,28 +111,37 @@ const TEMPLATE = {
 
   /* ===== 2 sets ===== */
   venn2: ({ A, B, AB, names, pct }) => {
+
     const cx1 = 220;
     const cx2 = 380;
     const cy = 200;
-    const offset = 80;
+    const r = 140;
 
     return `
     <svg viewBox="0 0 600 400" width="500" preserveAspectRatio="xMidYMid meet">
-      <circle cx="${cx1}" cy="${cy}" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
-      <circle cx="${cx2}" cy="${cy}" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
 
-      ${label(cx1 - offset, 40, names[0])}
-      ${label(cx2 + offset, 40, names[1])}
+      <!-- circles -->
+      <circle cx="${cx1}" cy="${cy}" r="${r}" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
+      <circle cx="${cx2}" cy="${cy}" r="${r}" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
 
-      ${value(cx1 - 40, cy, "A", A, pct)}
-      ${value(cx2 + 40, cy, "B", B, pct)}
-      ${value(300, cy, "AB", AB, pct)}
-    </svg>
-    `;
-  },
+      <!-- labels -->
+      ${label(cx1, 40, names[0])}
+      ${label(cx2, 40, names[1])}
+
+      <!-- values（完全中心） -->
+      ${value(cx1 - r/2.5, cy, "A", A, pct)}
+      ${value(cx2 + r/2.5, cy, "B", B, pct)}
+      ${value((cx1 + cx2)/2, cy, "AB", AB, pct)}
+
+  </svg>
+  `;
+},
 
   /* ===== 3 sets ===== */
   venn3: ({ onlyA, onlyB, onlyC, AB, AC, BC, ABC, names, pct }) => {
+
+    const r = 140;
+
     const cx1 = 220;
     const cx2 = 380;
     const cx3 = 300;
@@ -139,27 +149,32 @@ const TEMPLATE = {
     const cyTop = 180;
     const cyBottom = 320;
 
-    const offset = 80;
-
     return `
     <svg viewBox="0 0 600 500" width="100%" preserveAspectRatio="xMidYMid meet">
-      <circle cx="${cx1}" cy="${cyTop}" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
-      <circle cx="${cx2}" cy="${cyTop}" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
-      <circle cx="${cx3}" cy="${cyBottom}" r="140" fill="${TEMPLATE.colors[2]}" fill-opacity="0.7"/>
 
-      ${label(cx1 - offset, 30, names[0])}
-      ${label(cx2 + offset, 30, names[1])}
+      <!-- circles -->
+      <circle cx="${cx1}" cy="${cyTop}" r="${r}" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
+      <circle cx="${cx2}" cy="${cyTop}" r="${r}" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
+      <circle cx="${cx3}" cy="${cyBottom}" r="${r}" fill="${TEMPLATE.colors[2]}" fill-opacity="0.7"/>
+
+      <!-- labels -->
+      ${label(cx1, 20, names[0])}
+      ${label(cx2, 20, names[1])}
       ${label(cx3, 480, names[2])}
 
-      ${value(cx1 - 60, cyTop, "onlyA", onlyA, pct)}
-      ${value(cx2 + 60, cyTop, "onlyB", onlyB, pct)}
-      ${value(cx3, cyBottom + 60, "onlyC", onlyC, pct)}
+      <!-- only regions -->
+      ${value(cx1 - r/2, cyTop, "onlyA", onlyA, pct)}
+      ${value(cx2 + r/2, cyTop, "onlyB", onlyB, pct)}
+      ${value(cx3, cyBottom + r/2, "onlyC", onlyC, pct)}
 
-      ${value(300, 140, "AB", AB, pct)}
-      ${value(220, 260, "AC", AC, pct)}
-      ${value(380, 260, "BC", BC, pct)}
+      <!-- pair intersections -->
+      ${value((cx1 + cx2)/2, cyTop - 40, "AB", AB, pct)}
+      ${value((cx1 + cx3)/2 - 40, (cyTop + cyBottom)/2, "AC", AC, pct)}
+      ${value((cx2 + cx3)/2 + 40, (cyTop + cyBottom)/2, "BC", BC, pct)}
 
-      ${value(300, 220, "ABC", ABC, pct)}
+      <!-- triple -->
+      ${value(300, 230, "ABC", ABC, pct)}
+
     </svg>
     `;
   }
@@ -371,4 +386,64 @@ document.getElementById("fontSize").addEventListener("input", (e) => {
 document.getElementById("togglePct").addEventListener("change", (e) => {
   STYLE.showPct = e.target.checked;
   document.getElementById("runBtn").click();
+});
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const svg = document.querySelector("#venn svg");
+  if (!svg) {
+    alert("請先生成圖表");
+    return;
+  }
+
+  // === 1. clone SVG（避免污染畫面）===
+  const clone = svg.cloneNode(true);
+
+  // === 2. 設定明確尺寸（關鍵：避免縮放歪掉）===
+  const viewBox = clone.getAttribute("viewBox").split(" ");
+  const width = viewBox[2];
+  const height = viewBox[3];
+
+  clone.setAttribute("width", width);
+  clone.setAttribute("height", height);
+
+  // === 3. 加入 XML namespace（避免某些瀏覽器問題）===
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+  // === 4. 序列化 SVG ===
+  const serializer = new XMLSerializer();
+  const svgString = serializer.serializeToString(clone);
+
+  // === 5. 轉成圖片 ===
+  const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const img = new Image();
+
+  img.onload = function () {
+    // === 6. 建立 canvas ===
+    const canvas = document.createElement("canvas");
+    canvas.width = width * 2;   // 🔥 解析度提升（2x）
+    canvas.height = height * 2;
+
+    const ctx = canvas.getContext("2d");
+
+    // 白底（避免透明）
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 畫圖
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // === 7. 下載 PNG ===
+    const pngUrl = canvas.toDataURL("image/png");
+
+    const a = document.createElement("a");
+    a.href = pngUrl;
+    a.download = "venn-diagram.png";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  img.src = url;
 });
