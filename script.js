@@ -4,6 +4,8 @@
    - CURRENT: 儲存目前各區域 gene 結果（供點擊互動使用）
    - STYLE: 控制 SVG 顯示樣式（字體 / 字體大小 / 百分比顯示）
    ========================================================= */
+let NAMES = [];
+
 let CURRENT = {};
 
 let STYLE = {
@@ -258,22 +260,48 @@ function showGenes(key) {
 
   const genes = CURRENT[key] || [];
 
-  /* key → human readable label */
-  const titleMap = {
-    A: "List A only",
-    B: "List B only",
-    C: "List C only",
-    AB: "A ∩ B",
-    AC: "A ∩ C",
-    BC: "B ∩ C",
-    ABC: "A ∩ B ∩ C",
-    onlyA: "List A only",
-    onlyB: "List B only",
-    onlyC: "List C only"
-  };
+  const [A, B, C] = NAMES;
+
+  let label = "";
+
+  switch (key) {
+    case "A":
+    case "onlyA":
+      label = `${A} only`;
+      break;
+
+    case "B":
+    case "onlyB":
+      label = `${B} only`;
+      break;
+
+    case "C":
+    case "onlyC":
+      label = `${C} only`;
+      break;
+
+    case "AB":
+      label = `${A} ∩ ${B}`;
+      break;
+
+    case "AC":
+      label = `${A} ∩ ${C}`;
+      break;
+
+    case "BC":
+      label = `${B} ∩ ${C}`;
+      break;
+
+    case "ABC":
+      label = `${A} ∩ ${B} ∩ ${C}`;
+      break;
+
+    default:
+      label = key;
+  }
 
   document.getElementById("resultSelected").innerText =
-    "Selected: " + (titleMap[key] || key);
+    "Selected: " + label;
 
   document.getElementById("resultMeta").innerText =
     `${genes.length} genes`;
@@ -281,7 +309,6 @@ function showGenes(key) {
   document.getElementById("resultGenes").innerText =
     genes.length ? genes.join("\n") : "No genes";
 }
-
 
 /* =========================================================
    Controller（主流程入口）
@@ -296,6 +323,7 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
   let sets = [];
   let names = [];
+  NAMES = names;
 
   /* 收集所有輸入 */
   cards.forEach((card, i) => {
