@@ -163,14 +163,14 @@ const TEMPLATE = {
       ${label(cx3, 480, names[2])}
 
       <!-- only regions -->
-      ${value(cx1 - r/2, cyTop, "onlyA", onlyA, pct)}
-      ${value(cx2 + r/2, cyTop, "onlyB", onlyB, pct)}
-      ${value(cx3, cyBottom + r/2, "onlyC", onlyC, pct)}
+      ${value(cx1 - r/2, cyTop - 20, "onlyA", onlyA, pct)}
+      ${value(cx2 + r/2, cyTop - 20, "onlyB", onlyB, pct)}
+      ${value(cx3, cyBottom + r/2 - 20, "onlyC", onlyC, pct)}
 
       <!-- pair intersections -->
       ${value((cx1 + cx2)/2, cyTop - 40, "AB", AB, pct)}
-      ${value((cx1 + cx3)/2 - 40, (cyTop + cyBottom)/2, "AC", AC, pct)}
-      ${value((cx2 + cx3)/2 + 40, (cyTop + cyBottom)/2, "BC", BC, pct)}
+      ${value((cx1 + cx3)/2 - 40, (cyTop + cyBottom)/2 + 10, "AC", AC, pct)}
+      ${value((cx2 + cx3)/2 + 40, (cyTop + cyBottom)/2 + 10, "BC", BC, pct)}
 
       <!-- triple -->
       ${value(300, 230, "ABC", ABC, pct)}
