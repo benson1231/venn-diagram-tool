@@ -109,42 +109,60 @@ const TEMPLATE = {
   colors: ["#6A6CE0", "#F2F06A", "#6AF26A", "#F26A6A"],
 
   /* ===== 2 sets ===== */
-  venn2: ({ A, B, AB, names, pct }) => `
-  <svg viewBox="0 0 600 400" width="500">
-    <circle cx="220" cy="200" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
-    <circle cx="380" cy="200" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
+  venn2: ({ A, B, AB, names, pct }) => {
+    const cx1 = 220;
+    const cx2 = 380;
+    const cy = 200;
+    const offset = 80;
 
-    ${label(150, 40, names[0])}
-    ${label(450, 40, names[1])}
+    return `
+    <svg viewBox="0 0 600 400" width="500" preserveAspectRatio="xMidYMid meet">
+      <circle cx="${cx1}" cy="${cy}" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
+      <circle cx="${cx2}" cy="${cy}" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
 
-    ${value(180,200,"A",A,pct)}
-    ${value(420,200,"B",B,pct)}
-    ${value(300,200,"AB",AB,pct)}
-  </svg>
-  `,
+      ${label(cx1 - offset, 40, names[0])}
+      ${label(cx2 + offset, 40, names[1])}
+
+      ${value(cx1 - 40, cy, "A", A, pct)}
+      ${value(cx2 + 40, cy, "B", B, pct)}
+      ${value(300, cy, "AB", AB, pct)}
+    </svg>
+    `;
+  },
 
   /* ===== 3 sets ===== */
-  venn3: ({ onlyA, onlyB, onlyC, AB, AC, BC, ABC, names, pct }) => `
-  <svg viewBox="0 0 600 500" width="100%">
-    <circle cx="220" cy="180" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
-    <circle cx="380" cy="180" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
-    <circle cx="300" cy="320" r="140" fill="${TEMPLATE.colors[2]}" fill-opacity="0.7"/>
+  venn3: ({ onlyA, onlyB, onlyC, AB, AC, BC, ABC, names, pct }) => {
+    const cx1 = 220;
+    const cx2 = 380;
+    const cx3 = 300;
 
-    ${label(140, 30, names[0])}
-    ${label(460, 30, names[1])}
-    ${label(300, 480, names[2])}
+    const cyTop = 180;
+    const cyBottom = 320;
 
-    ${value(160,160,"onlyA",onlyA,pct)}
-    ${value(440,160,"onlyB",onlyB,pct)}
-    ${value(300,380,"onlyC",onlyC,pct)}
+    const offset = 80;
 
-    ${value(300,140,"AB",AB,pct)}
-    ${value(220,260,"AC",AC,pct)}
-    ${value(380,260,"BC",BC,pct)}
+    return `
+    <svg viewBox="0 0 600 500" width="100%" preserveAspectRatio="xMidYMid meet">
+      <circle cx="${cx1}" cy="${cyTop}" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
+      <circle cx="${cx2}" cy="${cyTop}" r="140" fill="${TEMPLATE.colors[1]}" fill-opacity="0.7"/>
+      <circle cx="${cx3}" cy="${cyBottom}" r="140" fill="${TEMPLATE.colors[2]}" fill-opacity="0.7"/>
 
-    ${value(300,220,"ABC",ABC,pct)}
-  </svg>
-  `
+      ${label(cx1 - offset, 30, names[0])}
+      ${label(cx2 + offset, 30, names[1])}
+      ${label(cx3, 480, names[2])}
+
+      ${value(cx1 - 60, cyTop, "onlyA", onlyA, pct)}
+      ${value(cx2 + 60, cyTop, "onlyB", onlyB, pct)}
+      ${value(cx3, cyBottom + 60, "onlyC", onlyC, pct)}
+
+      ${value(300, 140, "AB", AB, pct)}
+      ${value(220, 260, "AC", AC, pct)}
+      ${value(380, 260, "BC", BC, pct)}
+
+      ${value(300, 220, "ABC", ABC, pct)}
+    </svg>
+    `;
+  }
 };
 
 

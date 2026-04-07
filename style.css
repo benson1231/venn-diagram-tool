@@ -102,13 +102,14 @@ button {
 #venn {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   min-height: 300px;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 
 /* ===== SVG文字置中 =====
    - 圓內數字 / label 對齊
