@@ -1,33 +1,61 @@
+/* =========================================================
+   Global State & Style Config
+   ---------------------------------------------------------
+   - CURRENT: 儲存目前各區域 gene 結果（供點擊互動使用）
+   - STYLE: 控制 SVG 顯示樣式（字體 / 字體大小 / 百分比顯示）
+   ========================================================= */
 let CURRENT = {};
+
 let STYLE = {
   fontFamily: "'Times New Roman', serif",
   fontSize: 18,
   showPct: true
 };
 
-// ===== 基本工具 =====
+
+/* =========================================================
+   Basic Set Operations（核心資料處理）
+   ---------------------------------------------------------
+   將輸入文字轉為 Set 並提供：
+   - 交集 inter
+   - 聯集 union
+   - 差集 diff
+   ========================================================= */
+
+/* 將 textarea 輸入轉為 Set（支援換行 / 逗號 / tab） */
 function parseList(text) {
   return new Set(
     text
       .split(/\n|,|\t/)
       .map((x) => x.trim())
-      .filter((x) => x !== ""),
+      .filter((x) => x !== "")
   );
 }
 
+/* 交集 */
 function inter(a, b) {
   return new Set([...a].filter((x) => b.has(x)));
 }
 
+/* 聯集（多集合） */
 function union(...sets) {
   return new Set(sets.flatMap((s) => [...s]));
 }
 
+/* 差集（a - b） */
 function diff(a, b) {
   return new Set([...a].filter((x) => !b.has(x)));
 }
 
-// ===== UI 元件 =====
+
+/* =========================================================
+   SVG UI Components（繪圖元件）
+   ---------------------------------------------------------
+   - label: 顯示集合名稱
+   - value: 顯示數值 + 百分比（可點擊）
+   ========================================================= */
+
+/* 畫 label（集合名稱） */
 function label(x, y, text) {
   return `<text x="${x}" y="${y}" 
     font-size="${STYLE.fontSize + 2}" 
@@ -36,11 +64,18 @@ function label(x, y, text) {
   </text>`;
 }
 
+
+/* 畫數值（可點擊區域）
+   - 顯示 count
+   - optionally 顯示 percentage
+   - click → showGenes() */
 function value(x, y, key, n, pct) {
 
   const hasPct = STYLE.showPct;
 
-  const dyTop = hasPct ? "-0.4em" : "0em";   // ⭐ 關鍵
+  // 控制上下排版（有無百分比）
+  const dyTop = hasPct ? "-0.4em" : "0em";
+
   const pctLine = hasPct
     ? `<tspan x="${x}" dy="1.2em">(${pct(n)}%)</tspan>`
     : "";
@@ -61,10 +96,19 @@ function value(x, y, key, n, pct) {
   `;
 }
 
-// ===== 模板 =====
+
+/* =========================================================
+   SVG Templates（圖形模板）
+   ---------------------------------------------------------
+   - venn2: 2-set Venn
+   - venn3: 3-set Venn
+   - colors: 固定配色（可後續主題化）
+   ========================================================= */
+
 const TEMPLATE = {
   colors: ["#6A6CE0", "#F2F06A", "#6AF26A", "#F26A6A"],
 
+  /* ===== 2 sets ===== */
   venn2: ({ A, B, AB, names, pct }) => `
   <svg viewBox="0 0 600 400" width="500">
     <circle cx="220" cy="200" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
@@ -79,6 +123,7 @@ const TEMPLATE = {
   </svg>
   `,
 
+  /* ===== 3 sets ===== */
   venn3: ({ onlyA, onlyB, onlyC, AB, AC, BC, ABC, names, pct }) => `
   <svg viewBox="0 0 600 500" width="100%">
     <circle cx="220" cy="180" r="140" fill="${TEMPLATE.colors[0]}" fill-opacity="0.7"/>
@@ -102,13 +147,22 @@ const TEMPLATE = {
   `
 };
 
-// ===== 邏輯 =====
+
+/* =========================================================
+   Core Logic（集合計算）
+   ---------------------------------------------------------
+   - calc2 / calc3
+   - 同時更新 CURRENT（供 UI 點擊用）
+   ========================================================= */
+
+/* ===== 2-set 計算 ===== */
 function calc2(A, B) {
 
   const onlyA = diff(A,B);
   const onlyB = diff(B,A);
   const AB = inter(A,B);
 
+  // 儲存實際 gene（供點擊）
   CURRENT = {
     A: [...onlyA],
     B: [...onlyB],
@@ -123,6 +177,8 @@ function calc2(A, B) {
   };
 }
 
+
+/* ===== 3-set 計算 ===== */
 function calc3(A, B, C) {
 
   const AB = inter(A,B);
@@ -160,10 +216,16 @@ function calc3(A, B, C) {
   };
 }
 
+
+/* =========================================================
+   Interaction Layer（點擊 → 顯示 gene）
+   ========================================================= */
+
 function showGenes(key) {
 
   const genes = CURRENT[key] || [];
 
+  /* key → human readable label */
   const titleMap = {
     A: "List A only",
     B: "List B only",
@@ -187,13 +249,22 @@ function showGenes(key) {
     genes.length ? genes.join("\n") : "No genes";
 }
 
-// ===== controller =====
+
+/* =========================================================
+   Controller（主流程入口）
+   ---------------------------------------------------------
+   - 收集輸入
+   - 判斷 2-set / 3-set
+   - 產生 SVG
+   ========================================================= */
+
 document.getElementById("runBtn").addEventListener("click", () => {
   const cards = document.querySelectorAll(".card");
 
   let sets = [];
   let names = [];
 
+  /* 收集所有輸入 */
   cards.forEach((card, i) => {
     const name = card.querySelector(".title").value || `Set ${i + 1}`;
     const text = card.querySelector("textarea").value;
@@ -213,6 +284,7 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
   let svg = "";
 
+  /* ===== 2-set ===== */
   if (sets.length === 2) {
     const res = calc2(...sets);
     const pct = (n) => ((n / res.total) * 100).toFixed(1);
@@ -224,6 +296,7 @@ document.getElementById("runBtn").addEventListener("click", () => {
     });
   }
 
+  /* ===== 3-set ===== */
   if (sets.length === 3) {
     const res = calc3(...sets);
     const pct = (n) => ((n / res.total) * 100).toFixed(1);
@@ -238,6 +311,11 @@ document.getElementById("runBtn").addEventListener("click", () => {
   document.getElementById("venn").innerHTML = svg;
 });
 
+
+/* =========================================================
+   Utility（Copy 功能）
+   ========================================================= */
+
 function copyGenes() {
   const text = document.getElementById("resultGenes").innerText;
 
@@ -245,24 +323,33 @@ function copyGenes() {
 
   navigator.clipboard.writeText(text);
 
-  // 小提示
+  // UX feedback
   const btn = document.getElementById("copyBtn");
   btn.innerText = "Copied!";
   setTimeout(() => btn.innerText = "Copy", 1200);
 }
 
+
+/* =========================================================
+   Event Bindings（UI 控制）
+   ========================================================= */
+
 document.getElementById("copyBtn").addEventListener("click", copyGenes);
 document.getElementById("resultGenes").addEventListener("click", copyGenes);
+
+/* 字體切換 */
 document.getElementById("fontSelect").addEventListener("change", (e) => {
   STYLE.fontFamily = e.target.value;
   document.getElementById("runBtn").click();
 });
 
+/* 字體大小 */
 document.getElementById("fontSize").addEventListener("input", (e) => {
   STYLE.fontSize = parseInt(e.target.value);
   document.getElementById("runBtn").click();
 });
 
+/* 顯示百分比 toggle */
 document.getElementById("togglePct").addEventListener("change", (e) => {
   STYLE.showPct = e.target.checked;
   document.getElementById("runBtn").click();

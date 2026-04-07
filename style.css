@@ -1,3 +1,7 @@
+/* ===== 基本頁面設定 =====
+   - 深色主題（dark mode）
+   - 使用現代 sans-serif 字體
+*/
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
@@ -5,23 +9,42 @@ body {
   color: white;
 }
 
+
+/* ===== 主容器 =====
+   - 控制整體寬度（最大1200px）
+   - 置中 + 留白
+*/
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
 
+
+/* ===== 標題 =====
+   - 置中 + 下方間距
+*/
 h1 {
   text-align: center;
   margin-bottom: 20px;
 }
 
+
+/* ===== 輸入區 Grid =====
+   - 自動適應欄數（responsive）
+   - 最小寬度250px
+*/
 .input-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
 }
 
+
+/* ===== 每個輸入卡片 =====
+   - 深色卡片風格
+   - 圓角 + 陰影（提升層次感）
+*/
 .card {
   background: #1e293b;
   padding: 12px;
@@ -29,23 +52,37 @@ h1 {
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
+
+/* ===== List 名稱輸入 =====
+   - 簡潔 input（無邊框）
+*/
 .title {
   width: 100%;
   margin-bottom: 5px;
   border: none;
-  padding: 6px;
+  padding: 5px;
   border-radius: 6px;
 }
 
+
+/* ===== textarea（gene list） =====
+   - 固定高度
+   - 禁止 resize（避免破版）
+*/
 textarea {
   width: 100%;
   height: 150px;
   border: none;
-  padding: 8px;
+  padding: 5px;
   border-radius: 6px;
   resize: none;
 }
 
+
+/* ===== 主按鈕（Run / Generate） =====
+   - 藍色 CTA 按鈕
+   - hover + click feedback
+*/
 button {
   margin: 20px auto;
   display: block;
@@ -57,18 +94,35 @@ button {
   cursor: pointer;
 }
 
+
+/* ===== Venn 圖區 =====
+   - 白底（與深色UI形成對比）
+   - 固定最小高度
+*/
 #venn {
   background: white;
   border-radius: 12px;
   padding: 20px;
-  min-height: 400px;
+  min-height: 300px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* ===== SVG文字置中 =====
+   - 圓內數字 / label 對齊
+*/
 svg text {
   text-anchor: middle;
   dominant-baseline: middle;
 }
 
+
+/* ===== 結果區（右側 panel） =====
+   - Flex column（上下排列）
+   - 限制最大高度避免過長
+*/
 .result-box {
   height: 100%;
   max-height: 500px;
@@ -76,10 +130,8 @@ svg text {
   flex-direction: column;
 }
 
-.result-genes {
-  flex: 1;
-}
 
+/* ===== 結果標題 ===== */
 .result-title {
   font-size: 20px;
   font-weight: 600;
@@ -88,13 +140,22 @@ svg text {
   letter-spacing: 0.5px;
 }
 
+
+/* ===== meta資訊（gene數量等） ===== */
 .result-meta {
   font-size: 13px;
   color: #94a3b8;
   margin-bottom: 12px;
 }
 
+
+/* ===== gene list顯示區 =====
+   - scrollable
+   - 等寬字體（方便閱讀 gene）
+   - 深色框
+*/
 .result-genes {
+  flex: 1;
   max-height: 250px;
   overflow-y: auto;
 
@@ -112,12 +173,16 @@ svg text {
   border: 1px solid #1e293b;
 }
 
+
+/* ===== 結果 header（title + copy btn） ===== */
 .result-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+
+/* ===== 當前選擇區域標示（例如 A ∩ B） ===== */
 .result-selected {
   font-size: 16px;
   font-weight: 500;
@@ -125,8 +190,10 @@ svg text {
   margin-bottom: 6px;
 }
 
+
+/* ===== Copy 按鈕 ===== */
 #copyBtn {
-  position: static;
+  margin: 0;
   background: #22c55e;
   border: none;
   padding: 6px 12px;
@@ -143,6 +210,8 @@ svg text {
   transform: scale(0.95);
 }
 
+
+/* ===== scrollbar 美化 ===== */
 .result-genes::-webkit-scrollbar {
   width: 6px;
 }
@@ -152,6 +221,8 @@ svg text {
   border-radius: 3px;
 }
 
+
+/* ===== 控制區（dropdown / input） ===== */
 .controls {
   display: flex;
   gap: 10px;
@@ -168,6 +239,11 @@ svg text {
   border: none;
 }
 
+
+/* ===== 主版面（Venn + Result） =====
+   - 左：圖
+   - 右：結果
+*/
 .main-layout {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -176,6 +252,10 @@ svg text {
   align-items: start;
 }
 
+
+/* ===== RWD（手機版） =====
+   - 改成上下排列
+*/
 @media (max-width: 900px) {
   .main-layout {
     grid-template-columns: 1fr;
